@@ -437,6 +437,14 @@ function generateLevelSelectScreen() {
 }
 
 function gotoLevel(sectionIndex) {
+  if (solving) {
+    return;
+  }
+
+  if (sectionIndex < 0) {return;} //Invalid index
+
+  console.log(sectionIndex);
+
 	againing = false;
 	messagetext = "";
 
@@ -655,7 +663,8 @@ function loadLevelFromLevelDat(state,leveldat,randomseed) {
 	        }
         }
 
-	    initSmoothCamera();
+      initSmoothCamera();
+      twiddleMetadataExtras();
 
 	    backups=[]
 	    restartTarget=backupLevel();

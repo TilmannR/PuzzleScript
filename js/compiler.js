@@ -555,7 +555,7 @@ function levelsToArray(state) {
 			if (splitMessage.length>12){
 				logWarning('Message too long to fit on screen.', level[2]);
 			}
-			if(o.section != previousSection) sectionTerminated = false;
+			if(o.section != previousSection) {sectionTerminated = false; previousSection = o.section;}
 			if(sectionTerminated) logWarning('Message unreachable due to previous GOTO.', level[2]);
 		} else if (level[0] == 'goto') {
 			o = {
@@ -563,12 +563,12 @@ function levelsToArray(state) {
 				lineNumber: level[2],
 				section: level[3]
 			};
-			if(o.section != previousSection) sectionTerminated = false;
+			if(o.section != previousSection) {sectionTerminated = false; previousSection = o.section;}
 			if(sectionTerminated) logWarning('GOTO unreachable due to previous GOTO.', o.lineNumber);
 			sectionTerminated = true;
 		} else {
 			o = levelFromString(state,level);
-			if(o.section != previousSection) sectionTerminated = false;
+			if(o.section != previousSection) {sectionTerminated = false; previousSection = o.section;}
 			if(sectionTerminated) logWarning('Level unreachable due to previous GOTO.', o.lineNumber);
 		}
 		processedLevels.push(o);
@@ -624,11 +624,11 @@ function convertSectionNamesToIndices(state) {
 			var sectionName = command[1].toLowerCase();
 			var sectionIndex = sectionMap[sectionName];
 			if (sectionIndex === undefined){
-				logError('Invalid GOTO command - There is no section named "'+command[1]+'".', rule.lineNumber);
-				sectionIndex = 0;
+				logError('Invalid GOTO command - There is no section named "'+command[1]+'". Either it does not exist, or it has zero levels.', rule.lineNumber);
+				sectionIndex = -1;
 			}else if (duplicateSections[sectionName] !== undefined){
-				logError('Invalid GOTO command - There are multiple sections named "'+command[1]+'".', rule.lineNumber);
-				sectionIndex = 0;
+				logError('Invalid GOTO command - There are multiple sections named "'+command[1]+'". Section names must be unique for GOTO to work.', rule.lineNumber);
+				sectionIndex = -1;
 			}
 			command[1] = sectionIndex;
 		}
